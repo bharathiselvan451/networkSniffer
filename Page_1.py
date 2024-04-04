@@ -22,6 +22,14 @@ class firstpage(QWidget):
         #Sub_layout1.setAlignment(button1,Qt.AlignVCenter)
         #self.button_layout.addLayout(button_layout)
         
+        button2 = QPushButton("Device History")
+        button2.clicked.connect(self.Previous_devices)
+        button2.adjustSize()
+        #sbutton1.setFixedSize(QSize(100, 50))
+        #Sub_layout1 = QHBoxLayout()
+        self.button_layout.addWidget(button2)
+        #self.button_layout.addStretch(5)
+        self.button_layout.setAlignment(button2,Qt.AlignCenter)
         
 
         self.setLayout(self.button_layout)
@@ -61,5 +69,11 @@ class firstpage(QWidget):
              return
        except Exception as e:
           print(e)
+
+    def Previous_devices(self):
+        self.wid = QWidget()
+        self.wid.resize(250, 150)
+        self.wid.setWindowTitle('Devices')
+        self.wid.show()
            
         
