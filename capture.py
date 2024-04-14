@@ -1,14 +1,16 @@
 from scapy.all import *
 from datetime import datetime
 import query
+from PySide6.QtWidgets import QMessageBox
+#from Page_1 import firstpage
 
 def start(mac,ip,a):
     now = datetime.now()
     dt_string = now.strftime("%b-%d-%Y%H:%M:%S")
-    print("here_3")
+    
     filter = "host "+ip
     packets = sniff(filter= filter,count = a)
-    print("here_4.1ßß")
+   
     name = "device_"+mac+":_:"+dt_string+".pcapng"
     file = "/Users/divyaprabharajendran/Desktop/"+name
     open(file, "x")
@@ -16,8 +18,27 @@ def start(mac,ip,a):
     #sniff(offline="temp_1.pcap")
     print("here_4")
     query.insert(mac,ip,name)
+    message()
     
     return packets
 
-def store(packets):
-    wrpcapng("temp_1.pcap",packets)
+def message():
+       
+      message = QMessageBox()
+
+      message.setText ("Capturing finished" )
+
+      #message.setInformativeText ("Do you want to do something about it ?")
+
+      #message.Icon(QMessageBox.critical)
+
+      #message.setStandardButtons (MessageBox.Ok | MessageBox.Cancel)
+
+      message.setDefaultButton(QMessageBox.Ok)
+
+      ret = message. exec()
+
+      
+
+
+

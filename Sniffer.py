@@ -32,14 +32,11 @@ def algo(mac,ip,a):
     packets = ""
     count = 0
     try:
-        print("here__1")
-        
-        print("here_2")
         i = 1
         while True:
           
-          spoof(ip_target, ip_gateway)
-          spoof(ip_gateway, ip_target)
+          spoof(ip_target, ip_gateway)# from spoof device to default gateway
+          spoof(ip_gateway, ip_target)# from default gateway to spoof device
           print(len(packets))
           if(count == 0):
               packets = capture.start(mac,ip,a)
@@ -47,6 +44,7 @@ def algo(mac,ip,a):
           elif(len(packets) == a):
               restore(ip_gateway, ip_target)
               restore(ip_target, ip_gateway)
+              print("completed")
               break
           time.sleep(interval)
           

@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QPushButton, QFrame, QWidget, QHBoxLayout, QVBoxLayout, QGridLayout, QLabel, QLineEdit
+from PySide6.QtWidgets import QApplication, QPushButton, QFrame, QWidget, QHBoxLayout, QVBoxLayout, QGridLayout, QLabel, QLineEdit, QMessageBox
 from PySide6.QtCore import Qt, QSize
 import Scan
 import Sniffer
@@ -12,8 +12,9 @@ class firstpage(QWidget):
         self.setWindowTitle("Network Scanner")
         self.setGeometry(600, 600, 600, 600)
         button1 = QPushButton("Scan the network")
+        button1.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
         button1.clicked.connect(self.Find_devices)
-        button1.adjustSize()
+        #button1.setGeometry(100, 100, 600, 400)
         #sbutton1.setFixedSize(QSize(100, 50))
         #Sub_layout1 = QHBoxLayout()
         self.button_layout.addWidget(button1)
@@ -24,6 +25,7 @@ class firstpage(QWidget):
         
         button2 = QPushButton("Device History")
         button2.clicked.connect(self.Previous_devices)
+        button2.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
         button2.adjustSize()
         #sbutton1.setFixedSize(QSize(100, 50))
         #Sub_layout1 = QHBoxLayout()
@@ -40,7 +42,9 @@ class firstpage(QWidget):
         print(self.devices)
         sub_layout2 = QHBoxLayout()
         label = QLabel("Enter the number of packets to capture :")
+        label.setStyleSheet("color : green")
         self.line = QLineEdit()
+        self.line.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
         self.button_layout.addWidget(label)
         self.button_layout.addWidget(self.line)
         self.button_layout.setAlignment(label,Qt.AlignCenter)
@@ -48,7 +52,8 @@ class firstpage(QWidget):
         #self.setGeometry(600, 600, 600, 600)
         #self.button_layout.addStretch(1)
         for key, value in dict.items():
-           Button = QPushButton(str(value[1]))
+           Button = QPushButton(str(value[1])+" "+str(key))
+           Button.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
            Button.pressed.connect(lambda val=str(key): self.modo(val))
            sub_layout2.addWidget(Button)
            Button.setGeometry(20, 15, 10, 40) 
@@ -56,6 +61,7 @@ class firstpage(QWidget):
            sub_layout2.setAlignment(Button,Qt.AlignVCenter)
         
         self.button_layout.addLayout(sub_layout2)
+        #dict.clear()
 
     def modo(self,mac):
        ip = self.devices[mac][1]
@@ -76,4 +82,4 @@ class firstpage(QWidget):
         self.wid.setWindowTitle('Devices')
         self.wid.show()
            
-        
+    
