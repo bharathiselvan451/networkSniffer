@@ -4,20 +4,20 @@ import query
 from PySide6.QtWidgets import QMessageBox
 #from Page_1 import firstpage
 
-def start(mac,ip,a):
+def start(d_name,vendour,mac,ip,a):
     now = datetime.now()
     dt_string = now.strftime("%b-%d-%Y%H:%M:%S")
     
     filter = "host "+ip
     packets = sniff(filter= filter,count = a)
    
-    name = "device_"+mac+":_:"+dt_string+".pcapng"
+    name = d_name+":_:"+dt_string+".pcapng"
     file = "/Users/divyaprabharajendran/Desktop/"+name
     open(file, "x")
     wrpcapng(file,packets)
     #sniff(offline="temp_1.pcap")
     print("here_4")
-    query.insert(mac,ip,name)
+    query.insert(d_name,vendour,mac,ip,name)
     message()
     
     return packets

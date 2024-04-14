@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QApplication, QPushButton, QFrame, QWidget, QHBoxL
 from PySide6.QtCore import Qt, QSize
 import Scan
 import Sniffer
+import query
 
 class firstpage(QWidget):
     button_layout = QVBoxLayout()
@@ -52,7 +53,13 @@ class firstpage(QWidget):
         #self.setGeometry(600, 600, 600, 600)
         #self.button_layout.addStretch(1)
         for key, value in dict.items():
-           Button = QPushButton(str(value[1])+" "+str(key))
+           device = query.search_device(key)
+           Button = ""
+           if(device==None):
+               Button = QPushButton(str(value[1])+" "+str(key))
+           else:
+               Button = QPushButton(device.Device_name)
+               
            Button.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
            Button.pressed.connect(lambda val=str(key): self.modo(val))
            sub_layout2.addWidget(Button)
@@ -64,22 +71,87 @@ class firstpage(QWidget):
         #dict.clear()
 
     def modo(self,mac):
-       ip = self.devices[mac][1]
-       print(ip)
-       try:
+           ip = self.devices[mac][1]
+
+     
            a = int(self.line.text())
-           if(a>0):
-              print(a)
-              Sniffer.algo(mac,ip,a)
+           
+           if(query.search(mac)):
+              self.user_input_1(mac,ip,a)
            else:
-             return
-       except Exception as e:
-          print(e)
+              device = query.search_device(mac)
+              Sniffer.algo(device.Device_name,device.vendour,mac,ip,a)
+       
+            #print(e)
+
+       
+       
+      
+       
 
     def Previous_devices(self):
+        devices = query.all()
+        Layout = QVBoxLayout()
+        for device in devices:
+            #Label = QLabel(device.Device_name+" "+device.MAC_address+" "+device.IP_address+" "+device.File_name+" "+device.vendour)
+            Label = QLabel("Device name: "+device.Device_name+" Mac Address: "+device.MAC_address+" IP address: "+device.IP_address+" Vendour: "+device.vendour+" Files: "+device.File_name)
+            Layout.addWidget(Label)
         self.wid = QWidget()
         self.wid.resize(250, 150)
         self.wid.setWindowTitle('Devices')
+        self.wid.setLayout(Layout)
         self.wid.show()
-           
+
+    def user_input_1(self,mac,ip,a):
+        label = QLabel("Provide details about the device")
+        label_1 = QLabel("name")
+        Device_name = QLineEdit()
+        label_2 = QLabel("vendour")
+        vendour = QLineEdit()
+        button = QPushButton("Continue")
+        
+        button.clicked.connect(lambda: self.First_Start(vendour,Device_name,self.wid_1,mac,ip,a))
+
+        label.setStyleSheet("color : green")
+        label_1.setStyleSheet("color : green")
+        Device_name.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
+        label_2.setStyleSheet("color : green")
+        vendour.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
+        button.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
+
+        Layout = QVBoxLayout()
+        Layout.addWidget(label)
+        Layout.addWidget(label_1)
+        Layout.addWidget(Device_name)
+        Layout.addWidget(label_2)
+        Layout.addWidget(vendour)
+        Layout.addWidget(button)
+
+        
+
+        Layout.setAlignment(label,Qt.AlignCenter)
+        Layout.setAlignment(label_1,Qt.AlignCenter)
+        Layout.setAlignment(Device_name,Qt.AlignCenter)
+        Layout.setAlignment(label_2,Qt.AlignCenter)
+        Layout.setAlignment(vendour,Qt.AlignCenter)
+        Layout.setAlignment(button,Qt.AlignCenter)
+
+        self.wid_1 = QWidget()
+        self.wid_1.setStyleSheet('background-color: white;')
+        self.wid_1.resize(250, 150)
+        self.wid_1.setWindowTitle('Provide details')
+        self.wid_1.setLayout(Layout)
+        self.wid_1.show()
+
+   
     
+    def First_Start(self,vendour,name,wid,mac,ip,a):
+        
+            print(str(vendour.text()))
+            print(str(name.text()))
+            print(mac)
+            print(ip)
+            print(a)
+            wid.close()
+            Sniffer.algo(name.text(),vendour.text(),mac,ip,a)
+        

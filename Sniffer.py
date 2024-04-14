@@ -24,7 +24,7 @@ def restore(destination_ip, source_ip):
 
 
 
-def algo(mac,ip,a):
+def algo(name,vendour,mac,ip,a):
     interval = 4
     ip_target = ip
     ip_gateway = dr.router()
@@ -39,7 +39,7 @@ def algo(mac,ip,a):
           spoof(ip_gateway, ip_target)# from default gateway to spoof device
           print(len(packets))
           if(count == 0):
-              packets = capture.start(mac,ip,a)
+              packets = capture.start(name,vendour,mac,ip,a)
               count = 1
           elif(len(packets) == a):
               restore(ip_gateway, ip_target)

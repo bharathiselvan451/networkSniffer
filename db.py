@@ -11,7 +11,9 @@ class Devices(Base):
     __tablename__ = 'Devices'
     MAC_address = Column(String, primary_key=True) 
     IP_address = Column(String) 
-    Files = Column(String) 
+    Device_name = Column(String)
+    vendour = Column(String)
+    File_name = Column(String)
      
   
      
