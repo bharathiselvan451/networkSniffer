@@ -1,8 +1,9 @@
-from PySide6.QtWidgets import QApplication, QPushButton, QFrame, QWidget, QHBoxLayout, QVBoxLayout, QGridLayout, QLabel, QLineEdit, QMessageBox
+from PySide6.QtWidgets import QApplication, QPushButton, QFrame, QWidget, QHBoxLayout, QVBoxLayout, QGridLayout, QLabel, QLineEdit, QMessageBox, QComboBox, QTableWidget, QTableWidgetItem, QHeaderView
 from PySide6.QtCore import Qt, QSize
 import Scan
 import Sniffer
 import query
+import threading
 
 class firstpage(QWidget):
     button_layout = QVBoxLayout()
@@ -10,10 +11,11 @@ class firstpage(QWidget):
     devices = {}
     def __init__(self):
         super().__init__()
+        self.resize(700,250)
         self.setWindowTitle("Network Scanner")
-        self.setGeometry(600, 600, 600, 600)
+        #self.setGeometry(600, 600, 600, 600)
         button1 = QPushButton("Scan the network")
-        button1.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
+        button1.setStyleSheet("background-color : green; border-width: 15px; border-color: beige; min-width: 6em;")
         button1.clicked.connect(self.Find_devices)
         #button1.setGeometry(100, 100, 600, 400)
         #sbutton1.setFixedSize(QSize(100, 50))
@@ -26,7 +28,7 @@ class firstpage(QWidget):
         
         button2 = QPushButton("Device History")
         button2.clicked.connect(self.Previous_devices)
-        button2.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
+        button2.setStyleSheet("background-color : green; border-width: 15px; border-color: beige; min-width: 6em;")
         button2.adjustSize()
         #sbutton1.setFixedSize(QSize(100, 50))
         #Sub_layout1 = QHBoxLayout()
@@ -45,7 +47,7 @@ class firstpage(QWidget):
         label = QLabel("Enter the number of packets to capture :")
         label.setStyleSheet("color : green")
         self.line = QLineEdit()
-        self.line.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
+        self.line.setStyleSheet("background-color : green; border-width: 15px; border-color: beige; min-width: 6em;")
         self.button_layout.addWidget(label)
         self.button_layout.addWidget(self.line)
         self.button_layout.setAlignment(label,Qt.AlignCenter)
@@ -60,7 +62,7 @@ class firstpage(QWidget):
            else:
                Button = QPushButton(device.Device_name)
                
-           Button.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
+           Button.setStyleSheet("background-color : green; border-width: 15px; border-color: beige; min-width: 6em;")
            Button.pressed.connect(lambda val=str(key): self.modo(val))
            sub_layout2.addWidget(Button)
            Button.setGeometry(20, 15, 10, 40) 
@@ -91,13 +93,44 @@ class firstpage(QWidget):
 
     def Previous_devices(self):
         devices = query.all()
+        print(len(devices))
         Layout = QVBoxLayout()
+        table = QTableWidget()
+        table.setGeometry(600, 600, 600, 600)
+        table.setRowCount(len(devices))
+        table.setColumnCount(5)
+        table.setHorizontalHeaderLabels(["Device name", "Mac address", "IP address", "Vendour", "Files"])
+
+        table.setStyleSheet("background-color : white; border-width: 15px; border-color: beige; color : green")
+
+        header = table.horizontalHeader()       
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(4, QHeaderView.ResizeMode.ResizeToContents)
+
+        i = 0
         for device in devices:
+            Devicename = QTableWidgetItem(device.Device_name)
+            MACaddress = QTableWidgetItem(device.MAC_address)
+            IPaddress = QTableWidgetItem(device.IP_address)
+            Vendour = QTableWidgetItem(device.vendour)
+            Files = QTableWidgetItem(device.File_name)
+            table.setItem(i,0,Devicename)
+            table.setItem(i,1,MACaddress)
+            table.setItem(i,2,IPaddress)
+            table.setItem(i,3,Vendour)
+            table.setItem(i,4,Files)
+            i = i+1
+
+
+
             #Label = QLabel(device.Device_name+" "+device.MAC_address+" "+device.IP_address+" "+device.File_name+" "+device.vendour)
-            Label = QLabel("Device name: "+device.Device_name+" Mac Address: "+device.MAC_address+" IP address: "+device.IP_address+" Vendour: "+device.vendour+" Files: "+device.File_name)
-            Layout.addWidget(Label)
+            #Label = QLabel("Device name: "+device.Device_name+" Mac Address: "+device.MAC_address+" IP address: "+device.IP_address+" Vendour: "+device.vendour+" Files: "+device.File_name)
+        Layout.addWidget(table)
         self.wid = QWidget()
-        self.wid.resize(250, 150)
+        self.wid.resize(700, 250)
         self.wid.setWindowTitle('Devices')
         self.wid.setLayout(Layout)
         self.wid.show()
@@ -107,17 +140,18 @@ class firstpage(QWidget):
         label_1 = QLabel("name")
         Device_name = QLineEdit()
         label_2 = QLabel("vendour")
-        vendour = QLineEdit()
+        vendour = QComboBox()
+        vendour.addItems(['Amazon', 'Apple', 'Cisco', 'Google', "IBM"])
         button = QPushButton("Continue")
         
-        button.clicked.connect(lambda: self.First_Start(vendour,Device_name,self.wid_1,mac,ip,a))
+        button.clicked.connect(lambda: self.First_Start(vendour.currentText(),Device_name,self.wid_1,mac,ip,a))
 
         label.setStyleSheet("color : green")
         label_1.setStyleSheet("color : green")
-        Device_name.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
+        Device_name.setStyleSheet("background-color : green; border-width: 15px; border-color: beige; min-width: 6em;")
         label_2.setStyleSheet("color : green")
-        vendour.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
-        button.setStyleSheet("background-color : green; border-width: 15px; border-color: beige;")
+        vendour.setStyleSheet("background-color : green; border-width: 15px; border-color: beige; min-width: 6em;")
+        button.setStyleSheet("background-color : green; border-width: 15px; border-color: beige; min-width: 6em;")
 
         Layout = QVBoxLayout()
         Layout.addWidget(label)
@@ -138,7 +172,7 @@ class firstpage(QWidget):
 
         self.wid_1 = QWidget()
         self.wid_1.setStyleSheet('background-color: white;')
-        self.wid_1.resize(250, 150)
+        self.wid_1.resize(250, 250)
         self.wid_1.setWindowTitle('Provide details')
         self.wid_1.setLayout(Layout)
         self.wid_1.show()
@@ -147,11 +181,26 @@ class firstpage(QWidget):
     
     def First_Start(self,vendour,name,wid,mac,ip,a):
         
-            print(str(vendour.text()))
+            print((vendour))
             print(str(name.text()))
             print(mac)
             print(ip)
             print(a)
-            wid.close()
-            Sniffer.algo(name.text(),vendour.text(),mac,ip,a)
+
+            #t1 = threading.Thread(target=Sniffer.algo, args=(name.text(),vendour.text(),mac,ip,a,))
+            t1 = threading.Thread(target= self.closer(wid), args=wid,)
+            t1.start()
+            t1.join()
+            Sniffer.algo(name.text(),vendour,mac,ip,a)
+            
+            #t1.join()
+
+
+    def closer(self,wid):
+        wid.close()
+        print("here here here")
+
+    
+
+        
         
