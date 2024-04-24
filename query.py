@@ -27,6 +27,10 @@ def search_device(mac):
     device =  db.session.query(Devices).filter(Devices.MAC_address == mac).first()
     return device
 
+def delete(mac):
+    device =  db.session.query(Devices).filter(Devices.MAC_address == mac).delete()
+    db.session.commit()
+
 def all():
     devices = db.session.query(db.Devices).all()
     return devices
